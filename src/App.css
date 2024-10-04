@@ -1,3 +1,4 @@
+
 .container {
   display: flex;
   flex-direction: column;
@@ -5,8 +6,11 @@
   height: 100vh;
   padding: 20px;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  transition: background 0.5s ease;
 }
+
 
 .inputContainer,
 .outputContainer {
@@ -82,17 +86,27 @@
   gap: 10px;
 }
 
+
 .transformButton,
 .addButton {
   font-size: 1em;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 8px;
   border: none;
   color: white;
   background-color: #007bff;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+.transformButton:hover,
+.addButton:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
 
 .transformButton:hover,
 .addButton:hover {

@@ -58,22 +58,13 @@ function App() {
     document.execCommand('copy');
   };
 
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(e.type === 'dragenter' || e.type === 'dragover');
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    document.body.style.transition = 'background 0.5s ease';
+    document.body.style.background = isDarkMode ? '#f5f7fa' : '#1e1e1e';
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      console.log(e.dataTransfer.files);
-    }
-  };
 
   return (
     <div className={`container ${isDarkMode ? 'dark-mode' : ''}`}>
