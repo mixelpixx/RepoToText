@@ -18,18 +18,36 @@ https://chat.openai.com/share/0670c1ec-a8a8-4568-ad09-bb9b152e1f0b
 
 Working front-end project: https://github.com/JeremiahPetersen/CaseConnect/tree/front-end
 
-## Running the Application with Docker
 
-To run the application using Docker, follow these steps:
+## Running the Application Locally
 
-1. Clone the repository.  Create a .env file in the root folder.
-2. Set up the environment variable `GITHUB_API_KEY` in the `.env` file.
-3. Build the Docker images with `docker compose build`.
-4. Start the containers with `docker compose up`.
-5. Access the application (http://localhost:3000) in a web browser and enter the GitHub repository URL and documentation URL (if available).
-6. Choose All files or choose specific file types.
-7. Click the "Submit" button to initiate the scraping process. The converted text will be displayed in the output area, and it will also be saved in the /data folder. 
-8. You can also click the "Copy Text" button to copy the generated text to the clipboard.
+To run the application locally without Docker, follow these steps:
+
+1. Clone the repository and navigate to the project directory.
+2. Create a `.env` file in the root folder and set up the environment variable `GITHUB_API_KEY`.
+3. Set up a Python virtual environment:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+4. Install the required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+5. Start the Flask server:
+   ```bash
+   python RepoToText.py
+   ```
+6. Navigate to the `src` directory and start the React frontend:
+   ```bash
+   npm install
+   npm start
+   ```
+7. Access the application at `http://localhost:3000` in a web browser and enter the GitHub repository URL and documentation URL (if available).
+8. Choose all files or select specific file types.
+9. Click the "Submit" button to initiate the scraping process. The converted text will be displayed in the output area and saved in the `/data` folder.
+10. You can also click the "Copy Text" button to copy the generated text to the clipboard.
+
 
 ## Prompt Example
 
