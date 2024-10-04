@@ -1,60 +1,10 @@
-import React, { useState } from 'react';
+
+import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
 
 function App() {
-  const [FILE_TYPES, setFileTypes] = useState([
-    '.txt',
-    '.py',
-    '.js',
-    '.sql',
-    '.env',
-    '.json',
-    '.html',
-    '.css',
-    '.md',
-    '.ts',
-    '.java',
-    '.cpp',
-    '.c',
-    '.cs',
-    '.php',
-    '.rb',
-    '.xml',
-    '.yml',
-    '.md',
-    '.sh',
-    '.swift',
-    '.h',
-    '.pyw',
-    '.asm',
-    '.bat',
-    '.cmd',
-    '.cls',
-    '.coffee',
-    '.erb',
-    '.go',
-    '.groovy',
-    '.htaccess',
-    '.java',
-    '.jsp',
-    '.lua',
-    '.make',
-    '.matlab',
-    '.pas',
-    '.perl',
-    '.pl',
-    '.ps1',
-    '.r',
-    '.scala',
-    '.scm',
-    '.sln',
-    '.svg',
-    '.vb',
-    '.vbs',
-    '.xhtml',
-    '.xsl',
-  ]);
+  const [FILE_TYPES, setFileTypes] = useState([...]);
   const [repoUrl, setRepoUrl] = useState('');
   const [docUrl, setDocUrl] = useState('');
   const [response, setResponse] = useState('');
@@ -62,28 +12,20 @@ function App() {
   const [fileSelection, setFileSelection] = useState('all');
   const [customFileType, setCustomFileType] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
 
-  const handleRepoChange = (e) => {
-    setRepoUrl(e.target.value);
-  };
-
-  const handleDocChange = (e) => {
-    setDocUrl(e.target.value);
-  };
+  const handleRepoChange = (e) => setRepoUrl(e.target.value);
+  const handleDocChange = (e) => setDocUrl(e.target.value);
 
   const handleFileTypeChange = (e) => {
     if (e.target.checked) {
       setSelectedFileTypes([...selectedFileTypes, e.target.value]);
     } else {
-      setSelectedFileTypes(
-        selectedFileTypes.filter((fileType) => fileType !== e.target.value)
-      );
+      setSelectedFileTypes(selectedFileTypes.filter((fileType) => fileType !== e.target.value));
     }
   };
 
-  const handleFileSelectionChange = (e) => {
-    setFileSelection(e.target.value);
-  };
+  const handleFileSelectionChange = (e) => setFileSelection(e.target.value);
 
   const handleAddFileType = () => {
     if (customFileType && !FILE_TYPES.includes(customFileType)) {
@@ -94,12 +36,10 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     let fileTypesToSend = selectedFileTypes;
     if (fileSelection === 'all') {
       fileTypesToSend = FILE_TYPES;
     }
-
     try {
       const result = await axios.post('http://localhost:5000/scrape', {
         repoUrl,
@@ -118,8 +58,21 @@ function App() {
     document.execCommand('copy');
   };
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(e.type === 'dragenter' || e.type === 'dragover');
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      console.log(e.dataTransfer.files);
+    }
   };
 
   return (
@@ -182,6 +135,15 @@ function App() {
             </div>
           </div>
         )}
+        <div
+          className={`drag-drop-area ${dragActive ? 'active' : ''}`}
+          onDragEnter={handleDrag}
+          onDragOver={handleDrag}
+          onDragLeave={handleDrag}
+          onDrop={handleDrop}
+        >
+          Drag & Drop your folder here
+        </div>
       </div>
       <div className="buttonContainer">
         <button onClick={handleSubmit} className="transformButton">

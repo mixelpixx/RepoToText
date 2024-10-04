@@ -21,10 +21,11 @@ CORS(app)
 
 class GithubRepoScraper:
     """Scrape GitHub repositories."""
-    def __init__(self, repo_name, doc_link=None, selected_file_types=None):
+    def __init__(self, repo_name, doc_link=None, selected_file_types=None, access_token=None):
         if selected_file_types is None:
             selected_file_types = []
         self.github_api_key = os.getenv("GITHUB_API_KEY")
+        self.access_token = access_token or self.github_api_key
         self.repo_name = repo_name
         self.doc_link = doc_link
         self.selected_file_types = selected_file_types
@@ -61,7 +62,7 @@ class GithubRepoScraper:
                         files_data.append(file_content)
             return files_data
 
-        github_instance = Github(self.github_api_key)
+        github_instance = Github(self.access_token)
         repo = github_instance.get_repo(self.repo_name)
         contents = repo.get_contents("")
         files_data = recursive_fetch_files(repo, contents)
@@ -80,7 +81,7 @@ class GithubRepoScraper:
             return ""
 
     def write_to_file(self, files_data):
-        """Built .txt file with all of the repo's files"""
+        """Build .txt file with all of the repo's files and metadata"""
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         filename = f"/app/data/{self.repo_name.replace('/', '_')}_{timestamp}.txt"
         with open(filename, "w", encoding='utf-8') as f:
@@ -89,17 +90,20 @@ class GithubRepoScraper:
                 f.write(f"Documentation Link: {self.doc_link}\n\n")
                 f.write(f"{doc_text}\n\n")
             f.write(f"*GitHub Repository \"{self.repo_name}\"*\n")
+            f.write(f"Total Files: {len(files_data)}\n")
+            f.write(f"Selected File Types: {', '.join(self.selected_file_types)}\n\n")
             for file_data in files_data:
                 f.write(file_data)
         return filename
 
     def clean_up_text(self, filename):
-        """Remove line breaks after 2."""
+        """Remove line breaks after 2 and add summary."""
         with open(filename, 'r', encoding='utf-8') as f:
             text = f.read()
         cleaned_text = re.sub('\n{3,}', '\n\n', text)
+        summary = f"Summary:\nRepository: {self.repo_name}\nFiles Processed: {len(files_data)}\n\n"
         with open(filename, 'w', encoding='utf-8') as f:
-            f.write(cleaned_text)
+            f.write(summary + cleaned_text)
 
     def run(self):
         """Run RepoToText."""
